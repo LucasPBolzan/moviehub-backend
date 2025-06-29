@@ -16,12 +16,16 @@ public class User {
 
     private String name;
 
+    private String email;
+
+    private String password;
+
     @ManyToMany
     @JoinTable(
             name = "user_favorites",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "movie_id")
     )
-    @JsonIgnore // Impede loop com Movie → User → Movie...
+    @JsonIgnore
     private List<Movie> favorites;
 }
