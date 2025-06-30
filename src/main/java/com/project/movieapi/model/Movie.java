@@ -2,11 +2,11 @@ package com.project.movieapi.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
 @Entity
+@Table(name = "movies")
 @Data
 public class Movie {
 
@@ -15,17 +15,12 @@ public class Movie {
     private Long id;
 
     private String title;
-    private String posterUrl;
-    private String synopsis;
+    private String description;
+
+    private Double averageRating;
+
     private String genres;
-    private int releaseYear;
-    private double averageRating;
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    @JsonIgnore // Evita loop com Review → Movie → Review...
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews;
-
-    @ManyToMany(mappedBy = "favorites")
-    @JsonIgnore // Evita loop com User → Movie → User...
-    private List<User> users;
 }

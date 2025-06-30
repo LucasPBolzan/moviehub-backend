@@ -23,12 +23,14 @@ public class ReviewService {
     }
 
     public Review createReview(Review review) {
-        Movie movie = movieRepository.findById(review.getMovie().getId())
+        Long movieId = review.getMovie().getId();
+        Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new RuntimeException("Filme não encontrado"));
+
         review.setMovie(movie);
         Review savedReview = reviewRepository.save(review);
 
-        List<Review> reviews = reviewRepository.findByMovieId(movie.getId());
+        List<Review> reviews = reviewRepository.findByMovieId(movieId);
         double averageRating = reviews.stream()
                 .mapToInt(Review::getRating)
                 .average()

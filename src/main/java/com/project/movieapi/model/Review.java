@@ -5,6 +5,7 @@ import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table(name = "reviews")
 @Data
 public class Review {
 
@@ -12,12 +13,17 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String author;
-    private String comment;
-    private int rating;
-
-    @ManyToOne
-    @JoinColumn(name = "movie_id")
-    @JsonIgnore // Evita o loop Movie ↔ Review ↔ Movie...
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "movie_id", nullable = false)
+    @JsonIgnore
     private Movie movie;
+
+    @Column(name = "user_name", nullable = false)
+    private String userName;
+
+    @Column(nullable = false)
+    private Integer rating; // 1-5
+
+    @Column(columnDefinition = "TEXT")
+    private String comment;
 }

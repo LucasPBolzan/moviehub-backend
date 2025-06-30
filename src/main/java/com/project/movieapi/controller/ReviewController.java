@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:8081")
 
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
@@ -22,6 +22,19 @@ public class ReviewController {
 
     @PostMapping
     public Review createReview(@RequestBody Review review) {
+        // Protegendo o log contra null
+        Long movieId = null;
+        if (review.getMovie() != null) {
+            movieId = review.getMovie().getId();
+        }
+
+        System.out.println("Recebendo avaliação:");
+        System.out.println("Filme ID: " + movieId);
+        System.out.println("Usuário: " + review.getUserName());
+        System.out.println("Nota: " + review.getRating());
+        System.out.println("Comentário: " + review.getComment());
+
         return reviewService.createReview(review);
     }
+
 }
