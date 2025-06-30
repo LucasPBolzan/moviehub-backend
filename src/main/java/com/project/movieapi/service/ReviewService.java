@@ -1,8 +1,6 @@
 package com.project.movieapi.service;
 
 import com.project.movieapi.model.Review;
-import com.project.movieapi.model.Movie;
-import com.project.movieapi.repository.MovieRepository;
 import com.project.movieapi.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,29 +13,11 @@ public class ReviewService {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    @Autowired
-    private MovieRepository movieRepository;
-
     public List<Review> getReviewsByMovie(Long movieId) {
-        return reviewRepository.findByMovieId(movieId);
+        return reviewRepository.findByMovieIdOrderByIdDesc(movieId);
     }
 
     public Review createReview(Review review) {
-        Long movieId = review.getMovie().getId();
-        Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new RuntimeException("Filme não encontrado"));
-
-        review.setMovie(movie);
-        Review savedReview = reviewRepository.save(review);
-
-        List<Review> reviews = reviewRepository.findByMovieId(movieId);
-        double averageRating = reviews.stream()
-                .mapToInt(Review::getRating)
-                .average()
-                .orElse(0.0);
-        movie.setAverageRating(averageRating);
-        movieRepository.save(movie);
-
-        return savedReview;
+        return reviewRepository.save(review);
     }
 }

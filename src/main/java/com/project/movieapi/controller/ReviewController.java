@@ -22,19 +22,12 @@ public class ReviewController {
 
     @PostMapping
     public Review createReview(@RequestBody Review review) {
-        // Protegendo o log contra null
-        Long movieId = null;
-        if (review.getMovie() != null) {
-            movieId = review.getMovie().getId();
-        }
-
         System.out.println("Recebendo avaliação:");
-        System.out.println("Filme ID: " + movieId);
+        System.out.println("Filme ID: " + review.getMovieId());
         System.out.println("Usuário: " + review.getUserName());
         System.out.println("Nota: " + review.getRating());
         System.out.println("Comentário: " + review.getComment());
 
         return reviewService.createReview(review);
     }
-
 }

@@ -2,7 +2,6 @@ package com.project.movieapi.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "reviews")
@@ -13,10 +12,8 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", nullable = false)
-    @JsonIgnore
-    private Movie movie;
+    @Column(name = "movie_id", nullable = false)
+    private Long movieId;
 
     @Column(name = "user_name", nullable = false)
     private String userName;

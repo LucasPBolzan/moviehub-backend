@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:8081", "http://localhost:8080"})
 public class UserController {
 
     @Autowired
@@ -18,16 +19,24 @@ public class UserController {
 
     // Cadastro de usuário
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+        System.out.println("=== RECEBENDO USUÁRIO ===");
+        System.out.println("Nome: " + user.getName());
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("Senha: " + user.getPassword());
+        System.out.println("==========================");
+
+        User savedUser = userRepository.save(user);
+        return ResponseEntity.ok(savedUser);
     }
 
     // Login de usuário
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginUser) {
-        System.out.println("Tentativa de login recebida:");
+        System.out.println("=== TENTATIVA DE LOGIN ===");
         System.out.println("Email: " + loginUser.getEmail());
         System.out.println("Senha: " + loginUser.getPassword());
+        System.out.println("===========================");
 
         Optional<User> user = userRepository.findByEmail(loginUser.getEmail());
 
