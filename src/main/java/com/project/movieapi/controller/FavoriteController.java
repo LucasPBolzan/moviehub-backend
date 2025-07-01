@@ -1,31 +1,50 @@
 package com.project.movieapi.controller;
 
-import com.project.movieapi.model.Movie;
+import com.project.movieapi.model.Favorite;
 import com.project.movieapi.service.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/favorites")
+@CrossOrigin(origins = "http://localhost:8081")
 public class FavoriteController {
 
     @Autowired
     private FavoriteService favoriteService;
 
-    @PostMapping("/{userId}/add/{movieId}")
-    public void addFavorite(@PathVariable Long userId, @PathVariable Long movieId) {
-        favoriteService.addFavorite(userId, movieId);
+    @GetMapping("/user/{userName}")
+    public ResponseEntity<List<Favorite>> getFavoritesByUser(@PathVariable String userName) {
+        List<Favorite> favorites = favoriteService.getFavoritesByUser(userName);
+        return ResponseEntity.ok(favorites);
     }
 
-    @PostMapping("/{userId}/remove/{movieId}")
-    public void removeFavorite(@PathVariable Long userId, @PathVariable Long movieId) {
-        favoriteService.removeFavorite(userId, movieId);
+    @PostMapping
+    public ResponseEntity<Favorite> addFavorite(@RequestBody Map<String, Object> request) {
+        Long movieId = Long.valueOf(request.get("movieId").toString());
+        String userName = request.get("userName").toString();
+
+        try {
+            Favorite favorite = favoriteService.addFavorite(movieId, userName);
+            return ResponseEntity.status(HttpStatus.CREATED).body(favorite);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    @GetMapping("/{userId}")
-    public List<Movie> getFavorites(@PathVariable Long userId) {
-        return favoriteService.getFavorites(userId);
+    @DeleteMapping("/movie/{movieId}/user/{userName}")
+    public ResponseEntity<Void> removeFavorite(@PathVariable Long movieId, @PathVariable String userName) {
+        favoriteService.removeFavorite(movieId, userName);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/check/movie/{movieId}/user/{userName}")
+    public ResponseEntity<Map<String, Boolean>> checkFavorite(@PathVariable Long movieId, @PathVariable String userName) {
+        boolean isFavorite = favoriteService.isFavorite(movieId, userName);
+        return ResponseEntity.ok(Map.of("isFavorite", isFavorite));
     }
 }
